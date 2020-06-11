@@ -375,6 +375,12 @@ SENTRY_EXPERIMENTAL_API void sentry_event_value_add_stacktrace(
     sentry_value_t event, void **ips, size_t len);
 
 /**
+ * Adds a stacktrace to an object.
+ */
+SENTRY_EXPERIMENTAL_API void sentry_value_add_stacktrace(
+    sentry_value_t val, size_t len);
+
+/**
  * This represents the OS dependent user context in the case of a crash, and can
  * be used to manually capture a crash.
  */

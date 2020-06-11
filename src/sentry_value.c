@@ -1029,3 +1029,23 @@ sentry_event_value_add_stacktrace(sentry_value_t event, void **ips, size_t len)
 
     sentry_value_set_by_key(event, "threads", threads);
 }
+
+void
+sentry_value_add_stacktrace(sentry_value_t val, size_t len) {
+    void *walked_backtrace[256];
+
+    len = sentry_unwind_stack(NULL, walked_backtrace, 256);
+
+    sentry_value_t frames = sentry__value_new_list_with_size(len);
+    for (size_t i = 0; i < len; i++) {
+        sentry_value_t frame = sentry_value_new_object();
+        sentry_value_set_by_key(frame, "instruction_addr",
+            sentry__value_new_addr((uint64_t)walked_backtrace[len - i - 1]));
+        sentry_value_append(frames, frame);
+    }
+
+    sentry_value_t stacktrace = sentry_value_new_object();
+    sentry_value_set_by_key(stacktrace, "frames", frames);
+
+    sentry_value_set_by_key(val, "stacktrace", stacktrace);
+}
